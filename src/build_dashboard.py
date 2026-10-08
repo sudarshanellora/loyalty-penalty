@@ -33,8 +33,15 @@ def main():
         "stress": stress.to_dict("records"),
         "sources": [src.loc[s].to_dict() for s in USED_SOURCES],
     }
-    html = (ROOT / "src" / "dashboard_template.html").read_text().replace("__DATA__", json.dumps(data))
-    (ROOT / "dashboard" / "index.html").write_text(html)
+    body = (ROOT / "src" / "dashboard_template.html").read_text().replace("__DATA__", json.dumps(data))
+    # Wrap the page content in a complete HTML document so it can be hosted as a static site.
+    html = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+            '<meta name="description" content="How many Irish households pay above-market mortgage rates, '
+            'what it costs them, and why lenders leave it alone.">\n'
+            '<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n'
+            '</head>\n<body>\n' + body + '\n</body>\n</html>\n')
+    (ROOT / "dashboard" / "index.html").write_text(html, encoding="utf-8")
     print("dashboard/index.html", f"{len(html) / 1024:.0f} KB")
 
 
