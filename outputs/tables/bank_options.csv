@@ -1,0 +1,4 @@
+option,nii_eur_m,vs_status_quo_eur_m,book_margin_bps_change
+A. Status quo,101.87,0.0,0.0
+B. Reprice everyone 0.5+ points above market,91.34,-10.52,-13.36
+C. Match the market only when a redemption request arrives,101.4,-0.46,-0.59

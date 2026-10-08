@@ -1,0 +1,11 @@
+metric,value,unit,reference_month,note,source_id
+pdh_accounts_total,700000,accounts,2026-06,"Reported as 'just under 700,000'; rounded figure used",CBI_ARREARS_2026Q2
+pdh_balance_total,111000,eur_m,2026-06,Total outstanding balance on PDH mortgage accounts,CBI_ARREARS_2026Q2
+pdh_accounts_non_bank,104344,accounts,2026-06,Mortgage accounts held by non-bank entities,CBI_ARREARS_2026Q2
+pdh_arrears_over_90d,21081,accounts,2026-06,3.0 per cent of PDH accounts,CBI_ARREARS_2026Q2
+pdh_arrears_under_90d,12315,accounts,2026-06,1.8 per cent of PDH accounts,CBI_ARREARS_2026Q2
+pdh_arrears_over_90d_non_bank,15854,accounts,2026-06,Non-bank share of accounts over 90 days in arrears,CBI_ARREARS_2026Q2
+pdh_restructured,53818,accounts,2026-03,7.7 per cent of PDH accounts,CBI_ARREARS_2026Q1
+stock_share_fixed,67,pct_accounts,2024-06,Share of PDH stock on fixed rates,BPFI_STOCK_2024
+stock_share_tracker,18,pct_accounts,2024-06,Share of PDH stock on tracker rates,BPFI_STOCK_2024
+stock_share_variable,15,pct_accounts,2024-06,Share of PDH stock on variable rates,BPFI_STOCK_2024

@@ -1,0 +1,4 @@
+item,low_eur,high_eur,note,source_id
+legal_fees_ex_vat,1200,1500,Plus VAT at 23 per cent,BONKERS_FEES
+valuation_fee_ex_vat,150,150,Plus VAT at 23 per cent,BONKERS_FEES
+cashback_flat_example,1500,2000,"Flat switcher cashback reported March 2026 (MoCo 1,500; AIB 2,000); offers change often",DODDL_2026M03

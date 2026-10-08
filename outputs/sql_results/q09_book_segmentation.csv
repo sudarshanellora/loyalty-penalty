@@ -1,0 +1,7 @@
+segment,loans,pct_of_loans,balance_eur_m,avg_current_rate_pct,interest_above_market_eur_m
+"1 Variable, 0.5+ points above market",4492,9.0,712.0,4.51,7.4
+"1b Variable, near market",2630,5.3,417.0,3.54,0.7
+"2 Fixed, rolling off within 12 months",6478,13.0,1037.0,3.36,5.2
+"3 Fixed, locked in",25464,50.9,4066.0,3.37,10.8
+4 Tracker,8586,17.2,1367.0,3.39,1.5
+5 Not eligible to switch,2350,4.7,277.0,3.49,1.0

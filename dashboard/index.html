@@ -1,0 +1,470 @@
+<title>The Loyalty Penalty</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column set like a mortgage statement. Figures sit on ruled lines,
+   the calculator is the only boxed object, charts run full column width. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #0f1720;
+  --ink-2: #47525f;
+  --muted: #76808d;
+  --rule: #dde1e7;
+  --axis: #b9c0ca;
+  --series: #2a78d6;
+  --series-quiet: #b7d3f6;
+  --wash: #eaf2fc;
+  --focus: #104281;
+  --display: "Bricolage Grotesque", "IBM Plex Sans", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1015; --surface: #151920; --ink: #f1f3f6; --ink-2: #b7bfca; --muted: #8a93a0;
+    --rule: #272d37; --axis: #3a424e; --series: #3987e5; --series-quiet: #1f4f8f;
+    --wash: #162435; --focus: #9ec5f4; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1015; --surface: #151920; --ink: #f1f3f6; --ink-2: #b7bfca; --muted: #8a93a0;
+  --rule: #272d37; --axis: #3a424e; --series: #3987e5; --series-quiet: #1f4f8f;
+  --wash: #162435; --focus: #9ec5f4; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+.page { max-width: 880px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 56px; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2rem, 5.4vw, 3.25rem); line-height: 1.05; font-weight: 700; letter-spacing: -0.015em; }
+h2 { font-size: clamp(1.4rem, 3.4vw, 1.9rem); line-height: 1.15; font-weight: 700; }
+h3 { font-size: 1.05rem; font-weight: 500; }
+p { margin: 0; max-width: 66ch; }
+a { color: inherit; text-decoration-color: var(--axis); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--series); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.eyebrow { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.15rem; color: var(--ink-2); }
+.stack { display: flex; flex-direction: column; gap: 18px; }
+.stack-lg { display: flex; flex-direction: column; gap: 28px; }
+.note { font-size: 0.85rem; color: var(--muted); }
+
+/* headline figures on ruled lines */
+.figures { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); }
+.figure { padding: 16px 20px 4px 0; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.figure + .figure { border-left: 1px solid var(--rule); padding-left: 20px; }
+.figure b { font-family: var(--body); font-weight: 600; font-size: clamp(1.7rem, 4.6vw, 2.5rem); line-height: 1.1; letter-spacing: -0.01em; }
+.figure span { color: var(--ink-2); font-size: 0.95rem; }
+.figure small { color: var(--muted); font-size: 0.8rem; }
+
+/* calculator */
+.calc { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 24px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+.calc h2 { grid-column: 1 / -1; }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; align-content: start; }
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.field label { font-size: 0.82rem; color: var(--ink-2); }
+.field input { font: 500 1rem var(--mono); color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 9px 10px; width: 100%; }
+.field input:focus-visible { border-color: var(--series); }
+.example { grid-column: 1 / -1; font-size: 0.82rem; color: var(--muted); }
+.statement { display: flex; flex-direction: column; min-width: 0; }
+.line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--rule); font-size: 0.95rem; }
+.line span { color: var(--ink-2); }
+.line b { font: 500 1rem var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.line.total { border-bottom: 0; border-top: 1px solid var(--ink); margin-top: -1px; padding-top: 14px; }
+.line.total b { font: 600 1.6rem var(--body); }
+.verdict { margin-top: 12px; padding: 12px 14px; background: var(--wash); border-radius: 4px; font-size: 0.92rem; color: var(--ink); }
+
+/* charts */
+.chart-head { display: flex; flex-wrap: wrap; gap: 12px 20px; justify-content: space-between; align-items: end; }
+.chart-head > div { min-width: 0; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 5px; overflow: hidden; background: var(--surface); }
+.seg button { font: 500 0.85rem var(--body); color: var(--ink-2); background: transparent; border: 0; padding: 8px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.plot { position: relative; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 12px 8px; }
+.plot svg { display: block; width: 100%; height: auto; overflow: visible; }
+.plot text { font-family: var(--body); fill: var(--muted); font-size: 12px; }
+.plot .lbl { fill: var(--ink-2); }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 0.8rem; line-height: 1.35; padding: 7px 9px; border-radius: 4px; max-width: 220px; z-index: 2; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.82rem; color: var(--ink-2); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+details { font-size: 0.88rem; }
+summary { cursor: pointer; color: var(--ink-2); width: fit-content; }
+.tbl { overflow-x: auto; margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 7px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; white-space: normal; }
+th { font-weight: 500; color: var(--ink-2); }
+.hbars { display: flex; flex-direction: column; gap: 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 20px; }
+.hbar { display: flex; flex-direction: column; gap: 6px; }
+.hbar-label { font-size: 0.92rem; color: var(--ink); }
+.hbar-row { display: flex; align-items: center; gap: 10px; }
+.hbar-fill { height: 20px; background: var(--series); border-radius: 0 4px 4px 0; min-width: 2px; }
+.hbar-val { font: 500 0.92rem var(--mono); color: var(--ink-2); white-space: nowrap; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.pair > div { padding: 16px 20px 16px 0; min-width: 0; }
+.pair > div + div { border-left: 1px solid var(--rule); padding-left: 20px; }
+.pair b { display: block; font: 600 1.5rem var(--body); }
+.pair span { font-size: 0.9rem; color: var(--ink-2); }
+ul.plain { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 8px; max-width: 68ch; }
+.sources { columns: 2; column-gap: 32px; font-size: 0.85rem; padding-left: 1.1em; margin: 0; }
+.sources li { break-inside: avoid; margin-bottom: 6px; }
+footer { border-top: 1px solid var(--ink); padding-top: 16px; display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; font-size: 0.85rem; color: var(--ink-2); }
+@media (max-width: 680px) {
+  .page { gap: 44px; padding-block: 28px 44px; }
+  .figures { grid-template-columns: 1fr; }
+  .figure + .figure { border-left: 0; border-top: 1px solid var(--rule); padding-left: 0; }
+  .calc { grid-template-columns: 1fr; padding: 18px; }
+  .pair { grid-template-columns: 1fr; }
+  .pair > div + div { border-left: 0; border-top: 1px solid var(--rule); padding-left: 0; }
+  .sources { columns: 1; }
+}
+</style>
+
+<main class="page">
+
+  <header class="stack-lg">
+    <div class="stack">
+      <div class="eyebrow">Irish mortgage market · data to June 2026</div>
+      <h1>One in four Irish mortgage holders pays over 4%. New customers pay 3.46%.</h1>
+      <p class="lede">About <span data-f="hh"></span> households sit above 4% on their home loan. The gap to the average new fixed rate costs them around <span data-f="eur"></span> a year, roughly <span data-f="each"></span> each. Fewer than 1 in 100 mortgages switches lender in a year.</p>
+    </div>
+    <div class="figures">
+      <div class="figure"><b data-f="hh"></b><span>households paying more than 4%</span><small><span data-f="share"></span> of roughly 700,000 home-loan accounts</small></div>
+      <div class="figure"><b data-f="eur"></b><span>a year paid above the new-customer rate</span><small>€185m to €385m under the assumptions tested</small></div>
+      <div class="figure"><b data-f="rate"></b><span>of mortgages switched lender in the last year</span><small><span data-f="sw"></span> switches, Q3 2025 to Q2 2026</small></div>
+    </div>
+  </header>
+
+  <section class="calc" aria-labelledby="calc-h">
+    <h2 id="calc-h">What is the gap costing you?</h2>
+    <form class="fields" id="calc" novalidate>
+      <div class="field"><label for="c-bal">Amount left to repay, €</label><input id="c-bal" inputmode="decimal" value="250000"></div>
+      <div class="field"><label for="c-yrs">Years left</label><input id="c-yrs" inputmode="decimal" value="20"></div>
+      <div class="field"><label for="c-now">Your rate now, %</label><input id="c-now" inputmode="decimal" value="4.25"></div>
+      <div class="field"><label for="c-new">Rate you could get, %</label><input id="c-new" inputmode="decimal" value="3.46"></div>
+      <div class="field"><label for="c-cost">Legal and valuation costs, €</label><input id="c-cost" inputmode="decimal" value="1850"></div>
+      <div class="field"><label for="c-cash">Cashback from new lender, €</label><input id="c-cash" inputmode="decimal" value="0"></div>
+      <p class="example">These are example figures. Replace them with your own. 3.46% is the average rate on new fixed mortgages in June 2026. Moving to a new rate with your current lender has no legal costs, so set costs to 0 for that case.</p>
+    </form>
+    <div class="statement" aria-live="polite">
+      <div class="line"><span>Monthly repayment now</span><b id="o-m1"></b></div>
+      <div class="line"><span>Monthly repayment at the new rate</span><b id="o-m2"></b></div>
+      <div class="line"><span>Saving each month</span><b id="o-dm"></b></div>
+      <div class="line"><span>Saving in the first year, after costs</span><b id="o-y1"></b></div>
+      <div class="line"><span>Months to recover the cost of moving</span><b id="o-be"></b></div>
+      <div class="line total"><span>Saving over five years, after costs</span><b id="o-life"></b></div>
+      <div class="verdict" id="o-pct"></div>
+      <p class="note" style="margin-top:10px">An estimate, not financial advice. It assumes both rates hold for five years and ignores any fee for leaving a fixed rate early.</p>
+    </div>
+  </section>
+
+  <section class="stack-lg" aria-labelledby="s1">
+    <div class="stack">
+      <h2 id="s1">Ireland is no longer expensive. Staying put is.</h2>
+      <p>In June 2026 the average rate on a new Irish mortgage was <b>3.49%</b>, just under the euro area average of 3.51%. It was the first time Ireland dipped below the average since February 2023. A year earlier Irish borrowers paid 0.31 points more than the euro area.</p>
+      <p>The gap that remains is inside Ireland, between people taking out a loan today and people who took one out earlier and have not moved since. The Central Bank publishes how many home loans sit at each interest rate. The chart shows that spread for each type of lender.</p>
+    </div>
+    <div class="stack">
+      <div class="chart-head">
+        <div><h3 id="dist-title"></h3><div class="note">Share of home loans in each half-point rate band, end-June 2026</div></div>
+        <div class="seg" role="group" aria-label="Type of lender" id="dist-seg"></div>
+      </div>
+      <div class="plot" id="dist-plot"></div>
+      <div class="legend"><span><i style="background:var(--series)"></i>Above 4%</span><span><i style="background:var(--series-quiet)"></i>4% or below</span><span>Vertical line: average new fixed rate, 3.46%</span></div>
+      <details><summary>View as a table</summary><div class="tbl" id="dist-table"></div></details>
+    </div>
+    <p>The widest spread is among firms that bought loan books and no longer lend. About 22% of their home loans carry a rate above 5%, against fewer than 1% at banks. Banks still account for most of the households above 4%, because they hold most of the loans.</p>
+  </section>
+
+  <section class="stack-lg" aria-labelledby="s2">
+    <div class="stack">
+      <h2 id="s2">Almost nobody moves</h2>
+      <p>About <span data-f="sw"></span> mortgages switched lender in the last four quarters. Set against the households paying more than 4%, that is roughly 1 in 30. The number is rising, from a low base.</p>
+    </div>
+    <div class="stack">
+      <div><h3>Mortgages switched to another lender, by quarter</h3><div class="note">Re-mortgage and switching drawdowns. Source: Banking &amp; Payments Federation Ireland</div></div>
+      <div class="plot" id="sw-plot"></div>
+      <details><summary>View as a table</summary><div class="tbl" id="sw-table"></div></details>
+    </div>
+    <div class="pair">
+      <div><b>€586m</b><span>of mortgages moved to a new rate with their existing lender in June 2026 alone, twice the level of June 2025</span></div>
+      <div><b>3.23%</b><span>average fixed rate on those renegotiated loans, lower than the 3.46% paid by new customers</span></div>
+    </div>
+    <p>Far more people move to a new rate with the same lender than move lender: about €586m in June against roughly €175m a month of switching. Those who ask get a good rate. The cost falls on the people who never ask, so the first call is to your own lender.</p>
+  </section>
+
+  <section class="stack-lg" aria-labelledby="s3">
+    <div class="stack">
+      <h2 id="s3">Why lenders leave it alone</h2>
+      <p>I simulated the loan book of a fictional mid-sized Irish lender: 50,000 home loans worth €7.9bn, with rates drawn from the Central Bank's published spread for banks. No real customer data is used. Then I priced three ways the lender could respond to customers who are paying more than the market.</p>
+    </div>
+    <div class="stack">
+      <div><h3>Net interest income given up each year, by option</h3><div class="note">Simulated book. Switching is set to the market-wide rate of 0.88% of accounts a year</div></div>
+      <div class="hbars" id="opt-bars"></div>
+    </div>
+    <div class="pair">
+      <div><b data-f="tip"></b><span>of affected customers would need to be about to leave each year before cutting everyone's rate pays for itself</span></div>
+      <div><b data-f="today"></b><span>is the model's estimate of how many of them leave today</span></div>
+    </div>
+    <div class="stack">
+      <p>At today's switching rate, letting customers leave is the cheapest option by a wide margin. Cutting rates for everyone who is 0.5 points or more above the market gives up about a tenth of the book's net interest income. Even a matching offer made only when a solicitor asks for redemption figures roughly breaks even before staff costs. The loyalty penalty lasts because inertia is profitable.</p>
+      <p>Two things can change that. Switching can keep rising. And since 24 March 2026 the revised Consumer Protection Code requires lenders to show customers how much they could save and to remind them of cheaper options. The table shows what each combination would cost the simulated lender.</p>
+    </div>
+    <div class="stack">
+      <div><h3>Net interest income lost each year, € million</h3><div class="note">Rows: how many times today's switching rate. Columns: share of customers above the market who move to a cheaper rate with the same lender</div></div>
+      <div class="tbl" id="stress-table"></div>
+    </div>
+  </section>
+
+  <section class="stack" aria-labelledby="s4">
+    <h2 id="s4">Method and limits</h2>
+    <ul class="plain">
+      <li>The Central Bank reports rates in half-point bands. I place every loan at the middle of its band and apply the average balance for its lender type. Placing loans at the bottom or top of each band, or assuming balances a quarter smaller, moves the €316m estimate to between €185m and €385m.</li>
+      <li>€316m is a gap in rates. It is not money every household can collect tomorrow. The published data does not show how many of these loans are inside a fixed term, where leaving early can carry a fee.</li>
+      <li>Some households cannot switch. About 33,400 home loans were in arrears at end-June 2026. Even if every one of them were in the above-4% group, about 146,500 households would remain.</li>
+      <li>The comparison rate is the average new fixed rate. Individual offers depend on the loan-to-value ratio, the energy rating of the home and the lender.</li>
+      <li>The lender results come from a simulated book. The funding cost (2.25%), the response to offers and the link between savings and switching are my assumptions. The switching rate is set to the published market figure.</li>
+      <li>Balances and loan counts for non-bank lenders are from mid-2025, the latest split published. Everything else is 2026 data.</li>
+    </ul>
+  </section>
+
+  <section class="stack" aria-labelledby="s5">
+    <h2 id="s5">Sources</h2>
+    <ol class="sources" id="sources"></ol>
+  </section>
+
+  <footer><span>Analysis by Sudarshan Ellora · October 2026</span><span>Built with SQL, Python and public data</span></footer>
+</main>
+
+<script>
+const D = {"market": {"benchmark_rate_pct": 3.46, "threshold_pct": 4.0, "households_above_threshold": 179941, "share_of_pdh_accounts_pct": 25.7, "excess_interest_eur_m": 316.0, "avg_per_household_eur": 1756, "households_floor_excluding_all_arrears": 146545, "by_lender": [{"lender_type": "bank", "households": 144268.0, "excess_eur": 219807984.0, "avg_per_household": 1524.0}, {"lender_type": "lending_non_bank", "households": 11466.0, "excess_eur": 21533510.0, "avg_per_household": 1878.0}, {"lender_type": "nonlending_non_bank", "households": 24207.0, "excess_eur": 74648490.0, "avg_per_household": 3084.0}], "switches_last_4q": 6158, "switch_value_last_4q_eur_m": 1855.0, "switch_rate_pct_of_accounts": 0.88, "switch_rate_pct_of_above_threshold": 3.4, "avg_switch_loan_eur_latest": 309600.0, "reneg_june_2026_eur_m": 586.0, "switch_monthly_avg_q2_2026_eur_m": 175.0, "reneg_to_switch_ratio": 3.3, "three_banks_nii_2025_eur_m": 7709.0, "bank_excess_as_pct_of_three_banks_nii": 2.9, "sensitivity_range_eur_m": [76.8, 452.7]}, "bank": {"book": {"loans": 50000, "book_balance_eur_m": 7877.0, "gross_interest_eur_m": 274.81, "funding_cost_eur_m": 177.23, "net_interest_eur_m": 97.58, "book_margin_pct": 1.24, "in_play_loans": 13600, "in_play_with_saving": 12632, "in_play_balance_eur_m": 2166.64, "interest_above_market_eur_m": 13.37, "expected_switchers": 440.0, "avg_p_among_savers_pct": 3.48}, "options": [{"option": "A. Status quo", "nii_eur_m": 101.87, "vs_status_quo_eur_m": 0.0, "book_margin_bps_change": 0.0}, {"option": "B. Reprice everyone 0.5+ points above market", "nii_eur_m": 91.34, "vs_status_quo_eur_m": -10.52, "book_margin_bps_change": -13.36}, {"option": "C. Match the market only when a redemption request arrives", "nii_eur_m": 101.4, "vs_status_quo_eur_m": -0.46, "book_margin_bps_change": -0.59}], "option_detail": {"A_lost_to_switching_eur_m": 2.2, "B_giveaway_eur_m": 12.63, "B_loans_repriced": 10970, "C_saved_eur_m": 0.4, "C_giveaway_eur_m": 0.36, "C_offers_made": 566, "C_customers_kept": 139, "C_desk_cost_eur_m": 0.5, "C_net_before_running_cost_eur_m": 0.04, "C_breakeven_switching_multiple": 13.9, "C_breakeven_book_switch_rate_pct": 12.2}, "run_rate_net_interest_eur_m": 104.07, "breakeven_precision_pct_by_acceptance": {"0.20": 78.8, "0.35": 68.0, "0.50": 59.8, "0.75": 49.8}, "flat_propensity_check": {"A_lost_eur_m": 1.31, "C_vs_A_eur_m": -0.41}, "reprice_pool_eur_m": 18.1, "blanket_reprice_tipping_point": {"switching_multiple": 6.4, "book_switch_rate_pct": 5.6, "leave_rate_among_repriced_pct": 24.2}, "leave_rate_among_repriced_today_pct": 3.8, "B_cost_pct_of_book_net_interest": 10.3, "A_loss_pct_of_run_rate": 2.1}, "buckets": [{"lender_type": "bank", "rate_lower": 0.0, "rate_upper": 0.5, "rate_mid": 0.25, "share": 0.0097, "accounts": 5777.8632}, {"lender_type": "bank", "rate_lower": 0.5, "rate_upper": 1.0, "rate_mid": 0.75, "share": 0.0001, "accounts": 59.5656}, {"lender_type": "bank", "rate_lower": 1.0, "rate_upper": 1.5, "rate_mid": 1.25, "share": 0.0, "accounts": 0.0}, {"lender_type": "bank", "rate_lower": 1.5, "rate_upper": 2.0, "rate_mid": 1.75, "share": 0.0061, "accounts": 3633.5016}, {"lender_type": "bank", "rate_lower": 2.0, "rate_upper": 2.5, "rate_mid": 2.25, "share": 0.0708, "accounts": 42172.4448}, {"lender_type": "bank", "rate_lower": 2.5, "rate_upper": 3.0, "rate_mid": 2.75, "share": 0.1079, "accounts": 64271.2824}, {"lender_type": "bank", "rate_lower": 3.0, "rate_upper": 3.5, "rate_mid": 3.25, "share": 0.3252, "accounts": 193707.3312}, {"lender_type": "bank", "rate_lower": 3.5, "rate_upper": 4.0, "rate_mid": 3.75, "share": 0.238, "accounts": 141766.128}, {"lender_type": "bank", "rate_lower": 4.0, "rate_upper": 4.5, "rate_mid": 4.25, "share": 0.1658, "accounts": 98759.7648}, {"lender_type": "bank", "rate_lower": 4.5, "rate_upper": 5.0, "rate_mid": 4.75, "share": 0.072, "accounts": 42887.232}, {"lender_type": "bank", "rate_lower": 5.0, "rate_upper": 5.5, "rate_mid": 5.25, "share": 0.0024, "accounts": 1429.5744}, {"lender_type": "bank", "rate_lower": 5.5, "rate_upper": 6.0, "rate_mid": 5.75, "share": 0.0012, "accounts": 714.7872}, {"lender_type": "bank", "rate_lower": 6.0, "rate_upper": 6.5, "rate_mid": 6.25, "share": 0.0003, "accounts": 178.6968}, {"lender_type": "bank", "rate_lower": 6.5, "rate_upper": 7.0, "rate_mid": 6.75, "share": 0.0001, "accounts": 59.5656}, {"lender_type": "bank", "rate_lower": 7.0, "rate_upper": 7.5, "rate_mid": 7.25, "share": 0.0, "accounts": 0.0}, {"lender_type": "bank", "rate_lower": 7.5, "rate_upper": 8.0, "rate_mid": 7.75, "share": 0.0, "accounts": 0.0}, {"lender_type": "bank", "rate_lower": 8.0, "rate_upper": 8.5, "rate_mid": 8.25, "share": 0.0001, "accounts": 59.5656}, {"lender_type": "bank", "rate_lower": 8.5, "rate_upper": 9.0, "rate_mid": 8.75, "share": 0.0001, "accounts": 59.5656}, {"lender_type": "bank", "rate_lower": 9.0, "rate_upper": 9.5, "rate_mid": 9.25, "share": 0.0002, "accounts": 119.1312}, {"lender_type": "lending_non_bank", "rate_lower": 0.0, "rate_upper": 0.5, "rate_mid": 0.25, "share": 0.0035, "accounts": 125.7987}, {"lender_type": "lending_non_bank", "rate_lower": 0.5, "rate_upper": 1.0, "rate_mid": 0.75, "share": 0.0, "accounts": 0.0}, {"lender_type": "lending_non_bank", "rate_lower": 1.0, "rate_upper": 1.5, "rate_mid": 1.25, "share": 0.0002, "accounts": 7.1885}, {"lender_type": "lending_non_bank", "rate_lower": 1.5, "rate_upper": 2.0, "rate_mid": 1.75, "share": 0.0442, "accounts": 1588.6585}, {"lender_type": "lending_non_bank", "rate_lower": 2.0, "rate_upper": 2.5, "rate_mid": 2.25, "share": 0.0347, "accounts": 1247.2047}, {"lender_type": "lending_non_bank", "rate_lower": 2.5, "rate_upper": 3.0, "rate_mid": 2.75, "share": 0.0741, "accounts": 2663.3392}, {"lender_type": "lending_non_bank", "rate_lower": 3.0, "rate_upper": 3.5, "rate_mid": 3.25, "share": 0.188, "accounts": 6757.1898}, {"lender_type": "lending_non_bank", "rate_lower": 3.5, "rate_upper": 4.0, "rate_mid": 3.75, "share": 0.3363, "accounts": 12087.4624}, {"lender_type": "lending_non_bank", "rate_lower": 4.0, "rate_upper": 4.5, "rate_mid": 4.25, "share": 0.2121, "accounts": 7623.404}, {"lender_type": "lending_non_bank", "rate_lower": 4.5, "rate_upper": 5.0, "rate_mid": 4.75, "share": 0.0999, "accounts": 3590.6556}, {"lender_type": "lending_non_bank", "rate_lower": 5.0, "rate_upper": 5.5, "rate_mid": 5.25, "share": 0.005, "accounts": 179.7125}, {"lender_type": "lending_non_bank", "rate_lower": 5.5, "rate_upper": 6.0, "rate_mid": 5.75, "share": 0.0019, "accounts": 68.2907}, {"lender_type": "lending_non_bank", "rate_lower": 6.0, "rate_upper": 6.5, "rate_mid": 6.25, "share": 0.0, "accounts": 0.0}, {"lender_type": "lending_non_bank", "rate_lower": 6.5, "rate_upper": 7.0, "rate_mid": 6.75, "share": 0.0, "accounts": 0.0}, {"lender_type": "lending_non_bank", "rate_lower": 7.0, "rate_upper": 7.5, "rate_mid": 7.25, "share": 0.0, "accounts": 0.0}, {"lender_type": "lending_non_bank", "rate_lower": 7.5, "rate_upper": 8.0, "rate_mid": 7.75, "share": 0.0, "accounts": 0.0}, {"lender_type": "lending_non_bank", "rate_lower": 8.0, "rate_upper": 8.5, "rate_mid": 8.25, "share": 0.0, "accounts": 0.0}, {"lender_type": "lending_non_bank", "rate_lower": 8.5, "rate_upper": 9.0, "rate_mid": 8.75, "share": 0.0, "accounts": 0.0}, {"lender_type": "lending_non_bank", "rate_lower": 9.0, "rate_upper": 9.5, "rate_mid": 9.25, "share": 0.0001, "accounts": 3.5942}, {"lender_type": "nonlending_non_bank", "rate_lower": 0.0, "rate_upper": 0.5, "rate_mid": 0.25, "share": 0.1503, "accounts": 10280.7456}, {"lender_type": "nonlending_non_bank", "rate_lower": 0.5, "rate_upper": 1.0, "rate_mid": 0.75, "share": 0.0025, "accounts": 171.0038}, {"lender_type": "nonlending_non_bank", "rate_lower": 1.0, "rate_upper": 1.5, "rate_mid": 1.25, "share": 0.0056, "accounts": 383.0484}, {"lender_type": "nonlending_non_bank", "rate_lower": 1.5, "rate_upper": 2.0, "rate_mid": 1.75, "share": 0.0067, "accounts": 458.2901}, {"lender_type": "nonlending_non_bank", "rate_lower": 2.0, "rate_upper": 2.5, "rate_mid": 2.25, "share": 0.0223, "accounts": 1525.3535}, {"lender_type": "nonlending_non_bank", "rate_lower": 2.5, "rate_upper": 3.0, "rate_mid": 2.75, "share": 0.1507, "accounts": 10308.1062}, {"lender_type": "nonlending_non_bank", "rate_lower": 3.0, "rate_upper": 3.5, "rate_mid": 3.25, "share": 0.2213, "accounts": 15137.2522}, {"lender_type": "nonlending_non_bank", "rate_lower": 3.5, "rate_upper": 4.0, "rate_mid": 3.75, "share": 0.0867, "accounts": 5930.4101}, {"lender_type": "nonlending_non_bank", "rate_lower": 4.0, "rate_upper": 4.5, "rate_mid": 4.25, "share": 0.0627, "accounts": 4288.7741}, {"lender_type": "nonlending_non_bank", "rate_lower": 4.5, "rate_upper": 5.0, "rate_mid": 4.75, "share": 0.071, "accounts": 4856.5066}, {"lender_type": "nonlending_non_bank", "rate_lower": 5.0, "rate_upper": 5.5, "rate_mid": 5.25, "share": 0.0432, "accounts": 2954.9448}, {"lender_type": "nonlending_non_bank", "rate_lower": 5.5, "rate_upper": 6.0, "rate_mid": 5.75, "share": 0.046, "accounts": 3146.4691}, {"lender_type": "nonlending_non_bank", "rate_lower": 6.0, "rate_upper": 6.5, "rate_mid": 6.25, "share": 0.0694, "accounts": 4747.0642}, {"lender_type": "nonlending_non_bank", "rate_lower": 6.5, "rate_upper": 7.0, "rate_mid": 6.75, "share": 0.0397, "accounts": 2715.5396}, {"lender_type": "nonlending_non_bank", "rate_lower": 7.0, "rate_upper": 7.5, "rate_mid": 7.25, "share": 0.0068, "accounts": 465.1302}, {"lender_type": "nonlending_non_bank", "rate_lower": 7.5, "rate_upper": 8.0, "rate_mid": 7.75, "share": 0.0043, "accounts": 294.1265}, {"lender_type": "nonlending_non_bank", "rate_lower": 8.0, "rate_upper": 8.5, "rate_mid": 8.25, "share": 0.007, "accounts": 478.8105}, {"lender_type": "nonlending_non_bank", "rate_lower": 8.5, "rate_upper": 9.0, "rate_mid": 8.75, "share": 0.0025, "accounts": 171.0038}, {"lender_type": "nonlending_non_bank", "rate_lower": 9.0, "rate_upper": 9.5, "rate_mid": 9.25, "share": 0.0013, "accounts": 88.922}], "switching": [{"quarter": "2024Q4", "volume": 1254, "value_eur_m": 331.0}, {"quarter": "2025Q1", "volume": 1179, "value_eur_m": 314.0}, {"quarter": "2025Q2", "volume": 1493, "value_eur_m": 421.0}, {"quarter": "2025Q3", "volume": 1562, "value_eur_m": 460.0}, {"quarter": "2025Q4", "volume": 1679, "value_eur_m": 504.0}, {"quarter": "2026Q1", "volume": 1221, "value_eur_m": 366.0}, {"quarter": "2026Q2", "volume": 1696, "value_eur_m": 525.0}], "bank_cdf": [[0.5, 0.97], [1.0, 0.98], [1.5, 0.98], [2.0, 1.59], [2.5, 8.67], [3.0, 19.46], [3.5, 51.98], [4.0, 75.78], [4.5, 92.36], [5.0, 99.56], [5.5, 99.8], [6.0, 99.92], [6.5, 99.95], [7.0, 99.96], [7.5, 99.96], [8.0, 99.96], [8.5, 99.97], [9.0, 99.98], [9.5, 100.0]], "stress": [{"switching_multiple": 1, "book_switch_rate_pct": 0.88, "internal_repricing_share": 0.0, "nii_lost_eur_m": 2.2, "pct_of_book_net_interest": 2.1, "book_margin_bps": 2.8}, {"switching_multiple": 1, "book_switch_rate_pct": 0.88, "internal_repricing_share": 0.1, "nii_lost_eur_m": 3.89, "pct_of_book_net_interest": 3.7, "book_margin_bps": 4.9}, {"switching_multiple": 1, "book_switch_rate_pct": 0.88, "internal_repricing_share": 0.25, "nii_lost_eur_m": 6.43, "pct_of_book_net_interest": 6.2, "book_margin_bps": 8.2}, {"switching_multiple": 1, "book_switch_rate_pct": 0.88, "internal_repricing_share": 0.5, "nii_lost_eur_m": 10.66, "pct_of_book_net_interest": 10.2, "book_margin_bps": 13.5}, {"switching_multiple": 2, "book_switch_rate_pct": 1.76, "internal_repricing_share": 0.0, "nii_lost_eur_m": 4.39, "pct_of_book_net_interest": 4.2, "book_margin_bps": 5.6}, {"switching_multiple": 2, "book_switch_rate_pct": 1.76, "internal_repricing_share": 0.1, "nii_lost_eur_m": 5.96, "pct_of_book_net_interest": 5.7, "book_margin_bps": 7.6}, {"switching_multiple": 2, "book_switch_rate_pct": 1.76, "internal_repricing_share": 0.25, "nii_lost_eur_m": 8.33, "pct_of_book_net_interest": 8.0, "book_margin_bps": 10.6}, {"switching_multiple": 2, "book_switch_rate_pct": 1.76, "internal_repricing_share": 0.5, "nii_lost_eur_m": 12.27, "pct_of_book_net_interest": 11.8, "book_margin_bps": 15.6}, {"switching_multiple": 4, "book_switch_rate_pct": 3.52, "internal_repricing_share": 0.0, "nii_lost_eur_m": 8.62, "pct_of_book_net_interest": 8.3, "book_margin_bps": 10.9}, {"switching_multiple": 4, "book_switch_rate_pct": 3.52, "internal_repricing_share": 0.1, "nii_lost_eur_m": 9.97, "pct_of_book_net_interest": 9.6, "book_margin_bps": 12.7}, {"switching_multiple": 4, "book_switch_rate_pct": 3.52, "internal_repricing_share": 0.25, "nii_lost_eur_m": 12.01, "pct_of_book_net_interest": 11.5, "book_margin_bps": 15.2}, {"switching_multiple": 4, "book_switch_rate_pct": 3.52, "internal_repricing_share": 0.5, "nii_lost_eur_m": 15.39, "pct_of_book_net_interest": 14.8, "book_margin_bps": 19.5}], "sources": [{"publisher": "Central Bank of Ireland", "title": "Frontier Statistics: Mortgage Interest Rate Distributions", "url": "https://centralbank.ie/statistics/frontierstatistics/mortgage-interest-rate-distributions"}, {"publisher": "Central Bank of Ireland", "title": "Retail Interest Rates - June 2026", "url": "https://edit.centralbank.ie/docs/default-source/statistics/data-and-analysis/credit-and-banking-statistics/retail-interest-rates/retail-interest-rates---june-2026"}, {"publisher": "Central Bank of Ireland", "title": "Retail Interest Rates - June 2025 (incl. Table A non-bank PDH lending)", "url": "https://www.centralbank.ie/docs/default-source/statistics/data-and-analysis/credit-and-banking-statistics/retail-interest-rates/2025m06_ie_retail_interest_rate_statistics.pdf"}, {"publisher": "Central Bank of Ireland (as reported by Irish Examiner)", "title": "Residential Mortgage Arrears and Repossessions Statistics Q2 2026", "url": "https://www.irishexaminer.com/business/economy/arid-41912935.html"}, {"publisher": "Banking & Payments Federation Ireland", "title": "BPFI Mortgage Drawdowns Report Q2 2026", "url": "https://bpfi.ie/wp-content/uploads/2026/07/BPFI-Mortgage-Drawdowns-Report-Q2-2026.pdf"}, {"publisher": "Banking & Payments Federation Ireland", "title": "BPFI Mortgage Drawdowns Report Q1 2026", "url": "https://bpfi.ie/wp-content/uploads/2026/04/BPFI-Mortgage-Drawdowns-Report-Q1-2026.pdf"}, {"publisher": "Banking & Payments Federation Ireland", "title": "BPFI Mortgage Drawdowns Report Q4 2025", "url": "https://bpfi.ie/wp-content/uploads/2026/01/Mortgage-Drawdowns-Report-Q4-2025.pdf"}, {"publisher": "Banking & Payments Federation Ireland", "title": "BPFI statement re ECB interest rate announcement (rate-type mix of PDH stock)", "url": "https://bpfi.ie/?p=7603"}, {"publisher": "AIB Group plc", "title": "2025 Annual Results announcement", "url": "https://aib.ie/content/dam/frontdoor/investorrelations/docs/resultscentre/annualreport/2025/aib-group-plc-afr-announcement-2025.pdf"}, {"publisher": "Bank of Ireland Group plc", "title": "2025 Annual Results and Strategy Update", "url": "https://investorrelations.bankofireland.com/app/uploads/D15699-BOI-FY-2025-Annual-Results-Announcement-Web-Feb26-FINAL-np.pdf"}, {"publisher": "PTSB plc", "title": "Annual results for year ended 31 December 2025", "url": "https://www.lse.co.uk/rns/PTSB/commentary-on-2025-annual-financial-report-m968x0b6yljc13e.html"}, {"publisher": "bonkers.ie", "title": "Switching mortgage: what are the legal fees", "url": "https://bonkers.ie/blog/mortgages/switching-mortgage-what-are-the-legal-fees-and-which-banks-will-pay-them-for-you"}, {"publisher": "William Fry", "title": "The Consumer Protection Code comes into force", "url": "https://www.williamfry.com/knowledge/the-consumer-protection-code-comes-into-force/"}]};
+const $ = (s) => document.querySelector(s);
+const eur0 = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+const int0 = new Intl.NumberFormat('en-IE', { maximumFractionDigits: 0 });
+const SVGNS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, text) {
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text != null) n.textContent = text;
+  return n;
+}
+function roundTo(x, n) { return Math.round(x / n) * n; }
+
+/* headline figures */
+const F = {
+  hh: int0.format(roundTo(D.market.households_above_threshold, 1000)),
+  eur: '€' + Math.round(D.market.excess_interest_eur_m) + 'm',
+  each: eur0.format(roundTo(D.market.avg_per_household_eur, 50)),
+  share: D.market.share_of_pdh_accounts_pct.toFixed(1) + '%',
+  rate: D.market.switch_rate_pct_of_accounts.toFixed(2) + '%',
+  sw: int0.format(D.market.switches_last_4q),
+  tip: Math.round(D.bank.blanket_reprice_tipping_point.leave_rate_among_repriced_pct) + '%',
+  today: Math.round(D.bank.leave_rate_among_repriced_today_pct) + '%'
+};
+document.querySelectorAll('[data-f]').forEach((n) => { n.textContent = F[n.dataset.f]; });
+
+/* tooltip shared by the SVG charts */
+function attachTip(plot) {
+  const tip = document.createElement('div');
+  tip.className = 'tip'; tip.hidden = true; plot.appendChild(tip);
+  return {
+    show(html, x, y) {
+      tip.innerHTML = html; tip.hidden = false;
+      const w = tip.offsetWidth, pw = plot.clientWidth;
+      tip.style.left = Math.max(4, Math.min(pw - w - 4, x - w / 2)) + 'px';
+      tip.style.top = Math.max(0, y - tip.offsetHeight - 10) + 'px';
+    },
+    hide() { tip.hidden = true; }
+  };
+}
+
+/* chart 1: spread of rates by lender type */
+const LENDERS = [
+  { key: 'bank', label: 'Banks' },
+  { key: 'lending_non_bank', label: 'Non-bank lenders' },
+  { key: 'nonlending_non_bank', label: 'Loan owners that no longer lend' }
+];
+let lender = 'bank';
+function drawDist() {
+  const plot = $('#dist-plot');
+  plot.innerHTML = '';
+  const tip = attachTip(plot);
+  const rows = D.buckets.filter((b) => b.lender_type === lender);
+  const above = rows.filter((b) => b.rate_lower >= 4);
+  const aboveShare = above.reduce((s, b) => s + b.share, 0) * 100;
+  const aboveAcc = above.reduce((s, b) => s + b.accounts, 0);
+  $('#dist-title').textContent = LENDERS.find((l) => l.key === lender).label + ': ' + Math.round(aboveShare) +
+    '% of home loans are above 4%, about ' + int0.format(roundTo(aboveAcc, 1000)) + ' households';
+  const W = plot.clientWidth - 24, H = Math.max(220, Math.min(320, W * 0.45));
+  const m = { l: 34, r: 8, t: 22, b: 40 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const x = (r) => m.l + (r / 9.5) * iw, yMax = 36, y = (v) => m.t + ih - (v / yMax) * ih;
+  const svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Bar chart of home loans by interest rate band' });
+  [0, 10, 20, 30].forEach((t) => {
+    svg.appendChild(el('line', { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), stroke: 'var(--rule)', 'stroke-width': 1 }));
+    svg.appendChild(el('text', { x: m.l - 8, y: y(t) + 4, 'text-anchor': 'end' }, t + '%'));
+  });
+  const band = iw / 19, bw = Math.min(24, band - 2);
+  rows.forEach((b) => {
+    const v = b.share * 100, cx = x(b.rate_mid), top = y(v), h = Math.max(0, y(0) - top), r = Math.min(4, h);
+    if (v > 0) {
+      const d = 'M' + (cx - bw / 2) + ',' + y(0) + ' V' + (top + r) + ' Q' + (cx - bw / 2) + ',' + top + ' ' + (cx - bw / 2 + r) + ',' + top +
+        ' H' + (cx + bw / 2 - r) + ' Q' + (cx + bw / 2) + ',' + top + ' ' + (cx + bw / 2) + ',' + (top + r) + ' V' + y(0) + ' Z';
+      svg.appendChild(el('path', { d: d, fill: b.rate_lower >= 4 ? 'var(--series)' : 'var(--series-quiet)' }));
+    }
+    const hit = el('rect', { x: cx - band / 2, y: m.t, width: band, height: ih, fill: 'transparent', tabindex: 0 });
+    const html = '<b>' + b.rate_lower.toFixed(1) + '% to ' + b.rate_upper.toFixed(1) + '%</b><br>' + v.toFixed(1) +
+      '% of loans<br>about ' + int0.format(roundTo(b.accounts, 100)) + ' households';
+    const show = () => tip.show(html, cx + 12, top + 16);
+    hit.addEventListener('pointerenter', show); hit.addEventListener('focus', show);
+    hit.addEventListener('pointerleave', tip.hide); hit.addEventListener('blur', tip.hide);
+    svg.appendChild(hit);
+  });
+  svg.appendChild(el('line', { x1: m.l, x2: W - m.r, y1: y(0), y2: y(0), stroke: 'var(--axis)', 'stroke-width': 1 }));
+  for (let t = 0; t <= 9; t++) svg.appendChild(el('text', { x: x(t), y: y(0) + 16, 'text-anchor': 'middle' }, t + '%'));
+  svg.appendChild(el('text', { x: m.l + iw / 2, y: H - 4, 'text-anchor': 'middle' }, 'Interest rate on the loan'));
+  const bx = x(D.market.benchmark_rate_pct);
+  svg.appendChild(el('line', { x1: bx, x2: bx, y1: m.t - 8, y2: y(0), stroke: 'var(--ink-2)', 'stroke-width': 1 }));
+  svg.appendChild(el('text', { x: bx + 6, y: m.t - 10, class: 'lbl' }, 'New fixed rate, 3.46%'));
+  plot.appendChild(svg);
+
+  let t = '<table><thead><tr><th>Rate band</th><th>Share of loans</th><th>Households (estimate)</th></tr></thead><tbody>';
+  rows.filter((b) => b.share > 0).forEach((b) => {
+    t += '<tr><td>' + b.rate_lower.toFixed(1) + '% to ' + b.rate_upper.toFixed(1) + '%</td><td>' + (b.share * 100).toFixed(2) +
+      '%</td><td>' + int0.format(roundTo(b.accounts, 100)) + '</td></tr>';
+  });
+  $('#dist-table').innerHTML = t + '</tbody></table>';
+}
+const seg = $('#dist-seg');
+LENDERS.forEach((l) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = l.label; b.setAttribute('aria-pressed', String(l.key === lender));
+  b.addEventListener('click', () => {
+    lender = l.key;
+    seg.querySelectorAll('button').forEach((n) => n.setAttribute('aria-pressed', String(n === b)));
+    drawDist();
+  });
+  seg.appendChild(b);
+});
+
+/* chart 2: switching by quarter */
+function drawSwitching() {
+  const plot = $('#sw-plot');
+  plot.innerHTML = '';
+  const tip = attachTip(plot);
+  const rows = D.switching;
+  const W = plot.clientWidth - 24, H = Math.max(200, Math.min(280, W * 0.4));
+  const m = { l: 44, r: 8, t: 22, b: 26 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b, yMax = 2000;
+  const y = (v) => m.t + ih - (v / yMax) * ih, band = iw / rows.length, bw = Math.min(24, band - 2);
+  const svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Bar chart of mortgage switches by quarter' });
+  [0, 500, 1000, 1500, 2000].forEach((t) => {
+    svg.appendChild(el('line', { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), stroke: 'var(--rule)', 'stroke-width': 1 }));
+    svg.appendChild(el('text', { x: m.l - 8, y: y(t) + 4, 'text-anchor': 'end' }, int0.format(t)));
+  });
+  rows.forEach((d, i) => {
+    const cx = m.l + band * (i + 0.5), top = y(d.volume), r = 4;
+    const p = 'M' + (cx - bw / 2) + ',' + y(0) + ' V' + (top + r) + ' Q' + (cx - bw / 2) + ',' + top + ' ' + (cx - bw / 2 + r) + ',' + top +
+      ' H' + (cx + bw / 2 - r) + ' Q' + (cx + bw / 2) + ',' + top + ' ' + (cx + bw / 2) + ',' + (top + r) + ' V' + y(0) + ' Z';
+    svg.appendChild(el('path', { d: p, fill: 'var(--series)' }));
+    const label = 'Q' + d.quarter.slice(5) + ' ' + (W < 520 ? "'" + d.quarter.slice(2, 4) : d.quarter.slice(0, 4));
+    svg.appendChild(el('text', { x: cx, y: y(0) + 16, 'text-anchor': 'middle' }, label));
+    if (i === rows.length - 1) svg.appendChild(el('text', { x: cx, y: top - 6, 'text-anchor': 'middle', class: 'lbl' }, int0.format(d.volume)));
+    const hit = el('rect', { x: cx - band / 2, y: m.t, width: band, height: ih, fill: 'transparent', tabindex: 0 });
+    const html = '<b>Q' + d.quarter.slice(5) + ' ' + d.quarter.slice(0, 4) + '</b><br>' + int0.format(d.volume) + ' switches<br>€' +
+      int0.format(d.value_eur_m) + 'm in total<br>average loan ' + eur0.format(roundTo(d.value_eur_m * 1e6 / d.volume, 1000));
+    const show = () => tip.show(html, cx + 12, top + 16);
+    hit.addEventListener('pointerenter', show); hit.addEventListener('focus', show);
+    hit.addEventListener('pointerleave', tip.hide); hit.addEventListener('blur', tip.hide);
+    svg.appendChild(hit);
+  });
+  svg.appendChild(el('line', { x1: m.l, x2: W - m.r, y1: y(0), y2: y(0), stroke: 'var(--axis)', 'stroke-width': 1 }));
+  plot.appendChild(svg);
+  let t = '<table><thead><tr><th>Quarter</th><th>Switches</th><th>Value, €m</th><th>Average loan</th></tr></thead><tbody>';
+  rows.forEach((d) => {
+    t += '<tr><td>Q' + d.quarter.slice(5) + ' ' + d.quarter.slice(0, 4) + '</td><td>' + int0.format(d.volume) + '</td><td>' +
+      int0.format(d.value_eur_m) + '</td><td>' + eur0.format(roundTo(d.value_eur_m * 1e6 / d.volume, 1000)) + '</td></tr>';
+  });
+  $('#sw-table').innerHTML = t + '</tbody></table>';
+}
+
+/* chart 3: lender options */
+(function () {
+  const names = [
+    'Status quo: let switchers leave',
+    'Cut rates for everyone 0.5 points or more above the market',
+    'Match the market only when a redemption request arrives'
+  ];
+  const run = D.bank.run_rate_net_interest_eur_m;
+  const vals = D.bank.options.map((o) => run - o.nii_eur_m);
+  const max = Math.max.apply(null, vals);
+  $('#opt-bars').innerHTML = vals.map((v, i) =>
+    '<div class="hbar"><div class="hbar-label">' + names[i] + '</div><div class="hbar-row"><div class="hbar-fill" style="width:' +
+    (78 * v / max).toFixed(1) + '%" title="€' + v.toFixed(1) + 'm a year"></div><div class="hbar-val">€' + v.toFixed(1) + 'm</div></div></div>').join('');
+})();
+
+/* stress table */
+(function () {
+  const mults = [1, 2, 4], shares = [0, 0.1, 0.25, 0.5];
+  let t = '<table><thead><tr><th>Switching</th>' + shares.map((s) => '<th>' + (s ? Math.round(s * 100) + '% reprice' : 'Nobody reprices') + '</th>').join('') + '</tr></thead><tbody>';
+  mults.forEach((mu) => {
+    const first = D.stress.find((r) => r.switching_multiple === mu);
+    t += '<tr><td>' + (mu === 1 ? 'Today' : mu + ' times today') + ' (' + first.book_switch_rate_pct.toFixed(1) + '% of loans a year)</td>';
+    shares.forEach((s) => {
+      const r = D.stress.find((q) => q.switching_multiple === mu && q.internal_repricing_share === s);
+      t += '<td>' + r.nii_lost_eur_m.toFixed(1) + '</td>';
+    });
+    t += '</tr>';
+  });
+  $('#stress-table').innerHTML = t + '</tbody></table>';
+})();
+
+/* sources */
+$('#sources').innerHTML = D.sources.map((s) => '<li><a href="' + s.url + '" target="_blank" rel="noopener">' + s.publisher + ', ' + s.title + '</a></li>').join('');
+
+/* calculator */
+function payment(principal, annualPct, months) {
+  const r = annualPct / 100 / 12;
+  return r === 0 ? principal / months : principal * r / (1 - Math.pow(1 + r, -months));
+}
+function bankPercentile(rate) {
+  const pts = [[0, 0]].concat(D.bank_cdf);
+  if (rate >= pts[pts.length - 1][0]) return 100;
+  for (let i = 1; i < pts.length; i++) {
+    if (rate <= pts[i][0]) {
+      const a = pts[i - 1], b = pts[i];
+      return a[1] + (b[1] - a[1]) * (rate - a[0]) / (b[0] - a[0]);
+    }
+  }
+  return 100;
+}
+function num(id) { return parseFloat(String($(id).value).replace(/[, €%]/g, '')); }
+function calc() {
+  const bal = num('#c-bal'), yrs = num('#c-yrs'), now = num('#c-now'), nw = num('#c-new');
+  const cost = num('#c-cost') || 0, cash = num('#c-cash') || 0;
+  const out = ['#o-m1', '#o-m2', '#o-dm', '#o-be', '#o-life', '#o-y1'];
+  if (!(bal > 0 && yrs > 0 && now >= 0 && nw >= 0)) {
+    out.forEach((id) => { $(id).textContent = '–'; });
+    $('#o-pct').textContent = 'Enter the amount left, the years left and both rates.';
+    return;
+  }
+  const n = Math.round(yrs * 12), m1 = payment(bal, now, n), m2 = payment(bal, nw, n), dm = m1 - m2, net = cost - cash;
+  $('#o-m1').textContent = eur0.format(m1);
+  $('#o-m2').textContent = eur0.format(m2);
+  $('#o-dm').textContent = eur0.format(dm);
+  $('#o-be').textContent = dm <= 0 ? 'Never' : net <= 0 ? 'None' : String(Math.ceil(net / dm));
+  $('#o-life').textContent = eur0.format(dm * Math.min(60, n) - net);
+  $('#o-y1').textContent = eur0.format(dm * Math.min(12, n) - net);
+  const pct = bankPercentile(now);
+  $('#o-pct').textContent = dm <= 0
+    ? 'At these rates there is no saving from moving.'
+    : 'A rate of ' + now.toFixed(2) + '% is higher than about ' + Math.round(pct) + '% of home loans held by Irish banks (Central Bank, June 2026).';
+}
+$('#calc').addEventListener('input', calc);
+$('#calc').addEventListener('submit', (e) => e.preventDefault());
+
+function drawAll() { drawDist(); drawSwitching(); }
+let rz;
+window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(drawAll, 120); });
+drawAll(); calc();
+</script>

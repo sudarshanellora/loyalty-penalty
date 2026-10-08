@@ -1,0 +1,4 @@
+lender_type,households,excess_eur,avg_per_household
+bank,144268.0,219807984.0,1524.0
+lending_non_bank,11466.0,21533510.0,1878.0
+nonlending_non_bank,24207.0,74648490.0,3084.0

@@ -1,0 +1,11 @@
+reference_month,lender_type,rate_type,outstanding_eur_m,accounts,avg_rate_pct,source_id
+2025-06,non_bank,variable,5768.319,41045,5.15,CBI_RIR_2025M06
+2025-06,non_bank,tracker,5690.596,35476,3.42,CBI_RIR_2025M06
+2025-06,non_bank,fixed,5701.493,29186,2.96,CBI_RIR_2025M06
+2025-06,non_bank,total,17160.408,105707,3.85,CBI_RIR_2025M06
+2025-06,bank,variable,,,4.15,CBI_RIR_2025M06
+2025-06,bank,tracker,,,3.39,CBI_RIR_2025M06
+2025-06,bank,fixed,,,3.24,CBI_RIR_2025M06
+2025-06,bank,total,,,3.44,CBI_RIR_2025M06
+2025-06,lending_non_bank,total,7030,36412,3.56,CBI_RIR_2025M06
+2025-06,nonlending_non_bank,total,10130,69295,4.05,CBI_RIR_2025M06

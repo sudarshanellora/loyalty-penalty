@@ -1,0 +1,172 @@
+
+=== q01_data_quality_reconciliation ===
+quarter  sum_of_segments  published_total  volume_difference  value_difference_eur_m
+ 2024Q4            13009            13009                  0                     1.0
+ 2025Q1             9217             9217                  0                     0.0
+ 2025Q2            10978            10978                  0                     0.0
+ 2025Q3            12570            12570                  0                     0.0
+ 2025Q4            13593            13593                  0                     0.0
+ 2026Q1             9437             9437                  0                    -1.0
+ 2026Q2            11795            11795                  0                    -1.0
+
+=== q02_switching_trend ===
+quarter  switches  value_eur_m  avg_switch_loan_eur  share_of_drawdowns_pct  yoy_volume_pct
+ 2024Q4      1254        331.0             263955.0                     9.6             NaN
+ 2025Q1      1179        314.0             266327.0                    12.8             NaN
+ 2025Q2      1493        421.0             281983.0                    13.6             NaN
+ 2025Q3      1562        460.0             294494.0                    12.4             NaN
+ 2025Q4      1679        504.0             300179.0                    12.4            33.9
+ 2026Q1      1221        366.0             299754.0                    12.9             3.6
+ 2026Q2      1696        525.0             309552.0                    14.4            13.6
+
+=== q03_annual_switching_rate ===
+quarter  switches_4q  value_4q_eur_m  pct_of_pdh_accounts
+ 2025Q3         5488          1526.0                 0.78
+ 2025Q4         5913          1699.0                 0.84
+ 2026Q1         5955          1751.0                 0.85
+ 2026Q2         6158          1855.0                 0.88
+
+=== q04_ireland_vs_euro_area ===
+  month  ie_new_rate_pct  ea_new_rate_pct  gap_bps  ie_rank_in_ea
+2025-06             3.60             3.29     31.0              7
+2025-07             3.60             3.30     30.0              7
+2026-04             3.50             3.45      5.0             10
+2026-05             3.48             3.48      0.0             12
+2026-06             3.49             3.51     -2.0             12
+
+=== q05_rate_buckets_by_lender ===
+        lender_type  rate_lower_pct  rate_upper_pct  share_of_loans_pct  est_accounts
+               bank             0.0             0.5                0.97          5778
+               bank             0.5             1.0                0.01            60
+               bank             1.5             2.0                0.61          3634
+               bank             2.0             2.5                7.08         42172
+               bank             2.5             3.0               10.79         64271
+               bank             3.0             3.5               32.52        193707
+               bank             3.5             4.0               23.80        141766
+               bank             4.0             4.5               16.58         98760
+               bank             4.5             5.0                7.20         42887
+               bank             5.0             5.5                0.24          1430
+               bank             5.5             6.0                0.12           715
+               bank             6.0             6.5                0.03           179
+               bank             6.5             7.0                0.01            60
+               bank             8.0             8.5                0.01            60
+               bank             8.5             9.0                0.01            60
+               bank             9.0             9.5                0.02           119
+   lending_non_bank             0.0             0.5                0.35           126
+   lending_non_bank             1.0             1.5                0.02             7
+   lending_non_bank             1.5             2.0                4.42          1589
+   lending_non_bank             2.0             2.5                3.47          1247
+   lending_non_bank             2.5             3.0                7.41          2663
+   lending_non_bank             3.0             3.5               18.80          6757
+   lending_non_bank             3.5             4.0               33.63         12087
+   lending_non_bank             4.0             4.5               21.21          7623
+   lending_non_bank             4.5             5.0                9.99          3591
+   lending_non_bank             5.0             5.5                0.50           180
+   lending_non_bank             5.5             6.0                0.19            68
+   lending_non_bank             9.0             9.5                0.01             4
+nonlending_non_bank             0.0             0.5               15.03         10281
+nonlending_non_bank             0.5             1.0                0.25           171
+nonlending_non_bank             1.0             1.5                0.56           383
+nonlending_non_bank             1.5             2.0                0.67           458
+nonlending_non_bank             2.0             2.5                2.23          1525
+nonlending_non_bank             2.5             3.0               15.07         10308
+nonlending_non_bank             3.0             3.5               22.13         15137
+nonlending_non_bank             3.5             4.0                8.67          5930
+nonlending_non_bank             4.0             4.5                6.27          4289
+nonlending_non_bank             4.5             5.0                7.10          4857
+nonlending_non_bank             5.0             5.5                4.32          2955
+nonlending_non_bank             5.5             6.0                4.60          3146
+nonlending_non_bank             6.0             6.5                6.94          4747
+nonlending_non_bank             6.5             7.0                3.97          2716
+nonlending_non_bank             7.0             7.5                0.68           465
+nonlending_non_bank             7.5             8.0                0.43           294
+nonlending_non_bank             8.0             8.5                0.70           479
+nonlending_non_bank             8.5             9.0                0.25           171
+nonlending_non_bank             9.0             9.5                0.13            89
+
+=== q06_loyalty_penalty_by_bucket ===
+        lender_type rate_bucket  est_accounts  gap_pct_points  excess_interest_per_account_eur  excess_interest_eur_m
+               bank     4.0-4.5         98760            0.79                           1245.0                  122.9
+               bank     4.5-5.0         42887            1.29                           2032.0                   87.2
+               bank     5.0-5.5          1430            1.79                           2820.0                    4.0
+               bank     5.5-6.0           715            2.29                           3608.0                    2.6
+               bank     6.0-6.5           179            2.79                           4395.0                    0.8
+               bank     6.5-7.0            60            3.29                           5183.0                    0.3
+               bank     8.0-8.5            60            4.79                           7546.0                    0.4
+               bank     8.5-9.0            60            5.29                           8334.0                    0.5
+               bank     9.0-9.5           119            5.79                           9122.0                    1.1
+   lending_non_bank     4.0-4.5          7623            0.79                           1525.0                   11.6
+   lending_non_bank     4.5-5.0          3591            1.29                           2491.0                    8.9
+   lending_non_bank     5.0-5.5           180            1.79                           3456.0                    0.6
+   lending_non_bank     5.5-6.0            68            2.29                           4421.0                    0.3
+   lending_non_bank     9.0-9.5             4            5.79                          11179.0                    0.0
+nonlending_non_bank     4.0-4.5          4289            0.79                           1155.0                    5.0
+nonlending_non_bank     4.5-5.0          4857            1.29                           1886.0                    9.2
+nonlending_non_bank     5.0-5.5          2955            1.79                           2617.0                    7.7
+nonlending_non_bank     5.5-6.0          3146            2.29                           3348.0                   10.5
+nonlending_non_bank     6.0-6.5          4747            2.79                           4079.0                   19.4
+nonlending_non_bank     6.5-7.0          2716            3.29                           4810.0                   13.1
+nonlending_non_bank     7.0-7.5           465            3.79                           5540.0                    2.6
+nonlending_non_bank     7.5-8.0           294            4.29                           6271.0                    1.8
+nonlending_non_bank     8.0-8.5           479            4.79                           7002.0                    3.4
+nonlending_non_bank     8.5-9.0           171            5.29                           7733.0                    1.3
+nonlending_non_bank     9.0-9.5            89            5.79                           8464.0                    0.8
+
+=== q07_headline ===
+        lender_type  households_above_4pct  excess_interest_eur_m_per_year  avg_per_household_eur
+               bank                 144268                           220.0                 1524.0
+   lending_non_bank                  11466                            22.0                 1878.0
+nonlending_non_bank                  24207                            75.0                 3084.0
+        ALL LENDERS                 179941                           316.0                 1756.0
+
+=== q08_bank_benchmarks ===
+           bank  fiscal_year  nii_eur_m  nim_pct  cir_pct  avg_earning_assets_eur_bn  nii_per_bp_of_nim_eur_m  nii_change_eur_m  nim_change_bps
+            AIB         2024     4129.0     3.16     40.0                      130.7                     13.1               NaN             NaN
+            AIB         2025     3748.0     2.73     44.0                      137.3                     13.7            -381.0           -43.0
+Bank of Ireland         2024     3565.0     2.91     46.0                      122.5                     12.3               NaN             NaN
+Bank of Ireland         2025     3371.0     2.68     49.0                      125.8                     12.6            -194.0           -23.0
+           PTSB         2024      612.0     2.20     74.0                       27.8                      2.8               NaN             NaN
+           PTSB         2025      590.0     2.03     75.0                       29.1                      2.9             -22.0           -17.0
+
+=== q09_book_segmentation ===
+                              segment  loans  pct_of_loans  balance_eur_m  avg_current_rate_pct  interest_above_market_eur_m
+ 1 Variable, 0.5+ points above market   4492           9.0          712.0                  4.51                          7.4
+             1b Variable, near market   2630           5.3          417.0                  3.54                          0.7
+2 Fixed, rolling off within 12 months   6478          13.0         1037.0                  3.36                          5.2
+                   3 Fixed, locked in  25464          50.9         4066.0                  3.37                         10.8
+                            4 Tracker   8586          17.2         1367.0                  3.39                          1.5
+             5 Not eligible to switch   2350           4.7          277.0                  3.49                          1.0
+
+=== q10_rolloff_ladder ===
+ quarters_ahead  loans_rolling_off  balance_eur_m  avg_fixed_rate_now_pct  annual_cost_if_left_on_variable_eur_m  cumulative_balance_eur_m
+              1               1574          249.0                    3.39                                   1.24                     249.0
+              2               1664          267.0                    3.36                                   1.34                     516.0
+              3               1715          268.0                    3.34                                   1.34                     784.0
+              4               1722          271.0                    3.35                                   1.35                    1055.0
+              5               1738          279.0                    3.36                                   1.39                    1333.0
+              6               1600          257.0                    3.36                                   1.29                    1591.0
+              7               1657          257.0                    3.36                                   1.29                    1848.0
+              8               1594          248.0                    3.39                                   1.24                    2096.0
+
+=== q11_concentration ===
+ decile  loans  min_saving_eur  avg_saving_eur  share_of_total_pct  cumulative_share_pct
+      1    633          2812.0          4372.0                33.3                  33.3
+      2    633          1946.0          2331.0                17.8                  51.1
+      3    633          1485.0          1699.0                13.0                  64.1
+      4    633          1165.0          1319.0                10.1                  74.1
+      5    633           924.0          1040.0                 7.9                  82.0
+      6    633           724.0           819.0                 6.2                  88.3
+      7    633           550.0           634.0                 4.8                  93.1
+      8    633           393.0           474.0                 3.6                  96.7
+      9    633           229.0           310.0                 2.4                  99.1
+     10    633             3.0           119.0                 0.9                 100.0
+
+=== q12_calibration_check ===
+                           measure  published  simulated
+              Average balance, EUR  157540.00  157540.00
+          Variable average rate, %       4.15       4.15
+           Tracker average rate, %       3.39       3.39
+Share of loans at or below 3.5%, %      51.98      51.96
+      Share of loans above 4.0%, %      24.22      24.13
+        Share on variable rates, %      15.00      15.00
+         Share on tracker rates, %      18.00      18.00

@@ -1,0 +1,114 @@
+{
+  "market": {
+    "benchmark_rate_pct": 3.46,
+    "threshold_pct": 4.0,
+    "households_above_threshold": 179941,
+    "share_of_pdh_accounts_pct": 25.7,
+    "excess_interest_eur_m": 316.0,
+    "avg_per_household_eur": 1756,
+    "households_floor_excluding_all_arrears": 146545,
+    "by_lender": [
+      {
+        "lender_type": "bank",
+        "households": 144268.0,
+        "excess_eur": 219807984.0,
+        "avg_per_household": 1524.0
+      },
+      {
+        "lender_type": "lending_non_bank",
+        "households": 11466.0,
+        "excess_eur": 21533510.0,
+        "avg_per_household": 1878.0
+      },
+      {
+        "lender_type": "nonlending_non_bank",
+        "households": 24207.0,
+        "excess_eur": 74648490.0,
+        "avg_per_household": 3084.0
+      }
+    ],
+    "switches_last_4q": 6158,
+    "switch_value_last_4q_eur_m": 1855.0,
+    "switch_rate_pct_of_accounts": 0.88,
+    "switch_rate_pct_of_above_threshold": 3.4,
+    "avg_switch_loan_eur_latest": 309600.0,
+    "reneg_june_2026_eur_m": 586.0,
+    "switch_monthly_avg_q2_2026_eur_m": 175.0,
+    "reneg_to_switch_ratio": 3.3,
+    "three_banks_nii_2025_eur_m": 7709.0,
+    "bank_excess_as_pct_of_three_banks_nii": 2.9,
+    "sensitivity_range_eur_m": [
+      76.8,
+      452.7
+    ]
+  },
+  "bank": {
+    "book": {
+      "loans": 50000,
+      "book_balance_eur_m": 7877.0,
+      "gross_interest_eur_m": 274.81,
+      "funding_cost_eur_m": 177.23,
+      "net_interest_eur_m": 97.58,
+      "book_margin_pct": 1.24,
+      "in_play_loans": 13600,
+      "in_play_with_saving": 12632,
+      "in_play_balance_eur_m": 2166.64,
+      "interest_above_market_eur_m": 13.37,
+      "expected_switchers": 440.0,
+      "avg_p_among_savers_pct": 3.48
+    },
+    "options": [
+      {
+        "option": "A. Status quo",
+        "nii_eur_m": 101.87,
+        "vs_status_quo_eur_m": 0.0,
+        "book_margin_bps_change": 0.0
+      },
+      {
+        "option": "B. Reprice everyone 0.5+ points above market",
+        "nii_eur_m": 91.34,
+        "vs_status_quo_eur_m": -10.52,
+        "book_margin_bps_change": -13.36
+      },
+      {
+        "option": "C. Match the market only when a redemption request arrives",
+        "nii_eur_m": 101.4,
+        "vs_status_quo_eur_m": -0.46,
+        "book_margin_bps_change": -0.59
+      }
+    ],
+    "option_detail": {
+      "A_lost_to_switching_eur_m": 2.2,
+      "B_giveaway_eur_m": 12.63,
+      "B_loans_repriced": 10970,
+      "C_saved_eur_m": 0.4,
+      "C_giveaway_eur_m": 0.36,
+      "C_offers_made": 566,
+      "C_customers_kept": 139,
+      "C_desk_cost_eur_m": 0.5,
+      "C_net_before_running_cost_eur_m": 0.04,
+      "C_breakeven_switching_multiple": 13.9,
+      "C_breakeven_book_switch_rate_pct": 12.2
+    },
+    "run_rate_net_interest_eur_m": 104.07,
+    "breakeven_precision_pct_by_acceptance": {
+      "0.20": 78.8,
+      "0.35": 68.0,
+      "0.50": 59.8,
+      "0.75": 49.8
+    },
+    "flat_propensity_check": {
+      "A_lost_eur_m": 1.31,
+      "C_vs_A_eur_m": -0.41
+    },
+    "reprice_pool_eur_m": 18.1,
+    "blanket_reprice_tipping_point": {
+      "switching_multiple": 6.4,
+      "book_switch_rate_pct": 5.6,
+      "leave_rate_among_repriced_pct": 24.2
+    },
+    "leave_rate_among_repriced_today_pct": 3.8,
+    "B_cost_pct_of_book_net_interest": 10.3,
+    "A_loss_pct_of_run_rate": 2.1
+  }
+}

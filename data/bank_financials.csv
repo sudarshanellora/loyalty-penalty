@@ -1,0 +1,7 @@
+bank,fiscal_year,net_interest_income_eur_m,net_interest_margin_pct,cost_income_ratio_pct,total_income_eur_m,new_mortgage_share_pct,source_id
+AIB,2024,4129,3.16,40,,,AIB_FY2025
+AIB,2025,3748,2.73,44,4504,30,AIB_FY2025
+Bank of Ireland,2024,3565,2.91,46,4346,,BOI_FY2025
+Bank of Ireland,2025,3371,2.68,49,4179,,BOI_FY2025
+PTSB,2024,612,2.20,74,,,PTSB_FY2025
+PTSB,2025,590,2.03,75,655,,PTSB_FY2025

@@ -1,0 +1,5 @@
+lender_type,households_above_4pct,excess_interest_eur_m_per_year,avg_per_household_eur
+bank,144268,220.0,1524.0
+lending_non_bank,11466,22.0,1878.0
+nonlending_non_bank,24207,75.0,3084.0
+ALL LENDERS,179941,316.0,1756.0

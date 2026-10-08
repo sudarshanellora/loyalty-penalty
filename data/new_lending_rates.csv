@@ -1,0 +1,14 @@
+month,ie_new_rate_pct,ea_new_rate_pct,ie_rank_in_ea,ie_fixed_rate_pct,ie_variable_rate_pct,fixed_share_pct,new_volume_eur_m,reneg_volume_eur_m,reneg_fixed_rate_pct,basis,source_id
+2024-06,4.11,,,3.95,4.48,70,808,141,3.90,derived from year-on-year changes stated in June 2025 release,CBI_RIR_2025M06
+2025-02,3.79,,5,,,77,,,,reported,CBI_RIR_2025M02
+2025-04,3.72,,,,4.45,,,,,derived from year-on-year changes stated in April 2026 release,CBI_RIR_2026M04
+2025-05,3.61,,,3.50,4.15,84,,292,,derived from changes stated in June 2025 and May 2026 releases,CBI_RIR_2025M06
+2025-06,3.60,3.29,7,3.52,4.08,85,996,285,3.47,reported,CBI_RIR_2025M06
+2025-07,3.60,3.30,7,,4.09,86,,,,reported,CBI_RIR_2025M07
+2025-09,3.59,,,,,,,,,reported,CBI_RIR_2025M11
+2025-10,3.56,,,,,,,,,reported,CBI_RIR_2025M11
+2025-11,3.53,,6,,,,,,,reported,CBI_RIR_2025M11
+2026-03,3.52,,,,4.05,,904,,,derived from month-on-month changes stated in April 2026 release,CBI_RIR_2026M04
+2026-04,3.50,3.45,10,3.45,4.13,92,884,,,reported,CBI_RIR_2026M04
+2026-05,3.48,3.48,12,3.44,4.03,93,953,506,3.25,reported,CBI_RIR_2026M05
+2026-06,3.49,3.51,12,3.46,3.96,93,1082,586,3.23,reported,CBI_RIR_2026M06
